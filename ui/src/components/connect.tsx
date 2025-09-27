@@ -9,7 +9,7 @@ export default function Connect() {
   return (
     <div className="flex flex-col items-center justify-center gap-5">
       <ConnectButton />
-      {isConnected && <div className="text-xs">{address}</div>}
+      {isConnected && <div className="text-xs textcolor-black">{address}</div>}
     </div>
   );
 }

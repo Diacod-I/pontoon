@@ -1,9 +1,8 @@
-import "@rainbow-me/rainbowkit/styles.css";
 import "@/styles/globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-
 import Providers from "../components/provider/rainbow-provider";
 
 export const metadata: Metadata = {
