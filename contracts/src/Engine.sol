@@ -155,6 +155,32 @@ contract Engine is Owned, ReentrancyGuard {
         return 9 - roundNumber;
     }
 
+    function _calculateChallengerReward(uint256 betAmount, uint256 roundsCompleted) private pure returns (uint256) {
+        require(roundsCompleted >= 1 && roundsCompleted <= MAX_ROUNDS, "Invalid rounds completed");
+
+        uint256 baseReward = betAmount;
+        uint256 bonusPercentage;
+
+        if (roundsCompleted == 1) {
+            bonusPercentage = 1;
+        } else if (roundsCompleted == 2) {
+            bonusPercentage = 2;
+        } else if (roundsCompleted == 3) {
+            bonusPercentage = 4;
+        } else if (roundsCompleted == 4) {
+            bonusPercentage = 10;
+        } else if (roundsCompleted == 5) {
+            bonusPercentage = 25;
+        } else if (roundsCompleted == 6) {
+            bonusPercentage = 60;
+        } else {
+            bonusPercentage = 100;
+        }
+
+        uint256 bonus = (betAmount * bonusPercentage) / 100;
+        return baseReward + bonus;
+    }
+
     // Using native flow VRF, even if its predictable it does not affect the core logic, only assigning of roles.
     function _randomNumber() internal view returns (uint64) {
         (bool ok, bytes memory data) = CADENCE_ARCH.staticcall(abi.encodeWithSignature("revertibleRandom()"));
