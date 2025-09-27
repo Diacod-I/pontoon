@@ -5,6 +5,7 @@ contracts/out/
 # Frontend node_modules and build output
 ui/node_modules/
 ui/dist/
+node_modules/
 
 # Logs
 logs
