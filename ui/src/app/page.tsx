@@ -2,7 +2,7 @@ import Connect from "@/components/connect";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#baeb34]/40 to-[#baeb34]/60">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#baeb34]/50 to-[#baeb34]/90">
       
       <nav className="bg-transparent dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b-3 border-black dark:border-gray-600">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -17,7 +17,7 @@ export default function HomePage() {
       </nav>
       {/* <div className="bg-[url('/monkey_background.png')] bg-cover bg-center z-0 h-screen"/> */}
       <div className="container flex flex-col items-center justify-center gap-6 py-8 mb-20">
-        <span className="text-5xl font-extrabold tracking-tight text-black sm:text-[5rem] mb-10 text-animation">
+        <span className="text-5xlfont-extrabold tracking-tight text-black sm:text-[5rem] mb-10 text-animation">
           Pontoon
         </span>
         <h3 className="text-xl text-center text-black font-thin">
