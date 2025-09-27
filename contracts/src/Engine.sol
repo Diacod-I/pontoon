@@ -18,6 +18,8 @@ contract Engine is Owned, ReentrancyGuard {
     uint256 totalMatches;
     Match[] matches;
 
+    constructor(address owner) Owned(owner) {}
+
     function createMatch(uint256 betAmount) public payable returns (uint256) {
         (bool success,) = address(this).call{value: betAmount}("");
         require(success, "Failed to send tokens");
