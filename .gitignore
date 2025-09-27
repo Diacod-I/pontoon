@@ -2,9 +2,13 @@
 contracts/cache/
 contracts/out/
 
-# Frontend node_modules and build output
-ui/node_modules/
+# Ignore all node_modules folders recursively
+**/node_modules/
+
+# Frontend build output
 ui/dist/
+dist/
+dist-ssr/
 
 # Logs
 logs
@@ -33,6 +37,4 @@ lerna-debug.log*
 .DS_Store
 
 # Misc
-/dist
-/dist-ssr
 *.local
