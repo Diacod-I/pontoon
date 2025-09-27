@@ -1,0 +1,6 @@
+{
+  "root": "pontoon/ui",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
