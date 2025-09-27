@@ -3,8 +3,8 @@ contracts/cache/
 contracts/out/
 
 # Frontend node_modules and build output
-ui/app-frontend/node_modules/
-ui/app-frontend/dist/
+ui/node_modules/
+ui/dist/
 
 # Logs
 logs
