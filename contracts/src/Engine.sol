@@ -78,7 +78,7 @@ contract Engine is Owned, ReentrancyGuard {
         emit MatchCreated(matchId, msg.sender, betAmount);
 
         ++totalMatches;
-        return totalMatches;
+        return matchId;
     }
 
     function joinMatch(uint256 matchId) public payable {
