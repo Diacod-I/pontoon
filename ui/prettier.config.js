@@ -1,4 +1,9 @@
-/** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
+/** @type {import("prettier").Config} */
 export default {
-  plugins: ["prettier-plugin-tailwindcss"],
+  singleQuote: false,
+  jsxSingleQuote: false,
+  semi: true,
+  bracketSpacing: true,
+  arrowParens: "always",
+  trailingComma: "es5",
 };
