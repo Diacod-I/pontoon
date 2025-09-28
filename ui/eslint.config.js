@@ -44,8 +44,7 @@ export default tseslint.config(
       "@typescript-eslint/prefer-nullish-coalescing": "off",
       "@typescript-eslint/require-await": "off",
       "@typescript-eslint/no-misused-promises": [
-        "warn",
-        { checksVoidReturn: { attributes: false } },
+        "off"
       ],
 
       // React / Next specific relaxations

@@ -189,7 +189,7 @@ export default function CreateGamePage() {
               key={index}
               onClick={() => handleButtonClick(index)}
               className={getButtonStyle(index)}
-              disabled={result !== null ?? !availableCards.includes(index)}
+              disabled={result !== null || !availableCards.includes(index)}
               aria-pressed={selectedButton === index}
               aria-label={`card-${index}`}
               type="button"

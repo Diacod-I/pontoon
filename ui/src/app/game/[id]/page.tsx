@@ -201,7 +201,7 @@ export default function GamePage() {
         const logObj = log as {
           address?: string;
           data?: string;
-          topics?: string[];
+          topics?: unknown[];
         };
 
         if (
@@ -213,10 +213,34 @@ export default function GamePage() {
         }
 
         try {
+          // validate data is hex-prefixed
+          const maybeData = logObj.data;
+          if (typeof maybeData !== "string" || !maybeData.startsWith("0x")) {
+            continue;
+          }
+
+          // topics must be an array and must include at least the signature topic
+          const rawTopics = Array.isArray(logObj.topics) ? (logObj.topics as unknown[]) : [];
+          if (rawTopics.length === 0) {
+            continue;
+          }
+
+          // ensure every topic is a hex string starting with 0x
+          const allHex = rawTopics.every(
+            (t) => typeof t === "string" && (t as string).startsWith("0x")
+          );
+          if (!allHex) {
+            continue;
+          }
+
+          // cast safely to the tuple type expected by viem
+          const topicsTuple = rawTopics as [`0x${string}`, ...(`0x${string}`)[]];
+          const dataHex = maybeData as `0x${string}`;
+
           const decodedUnknown = decodeEventLog({
             abi: engineAbi,
-            data: logObj.data ?? "",
-            topics: (logObj.topics as any) ?? [],
+            data: dataHex,
+            topics: topicsTuple,
           }) as unknown;
 
           if (!isDecodedEvent(decodedUnknown)) {
@@ -274,13 +298,13 @@ export default function GamePage() {
         throw new Error("Could not parse round result");
       }
 
-      // Store round in Convex
+
       await createRound({
         matchId: matchId,
         roundNumber: roundResult.roundNumber,
-        playerChoice: roundResult.playerChoice,
-        winningNumber: roundResult.winningNumber,
-        won: roundResult.won,
+        playerChoice: Number(roundResult.playerChoice ?? 0),
+        winningNumber: Number(roundResult.winningNumber ?? 0),
+        won: Boolean(roundResult.won),
         timestamp: Date.now(),
         txHash: txHash,
       });
