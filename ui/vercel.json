@@ -1,11 +1,7 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "pontoon/ui/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
-    }
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "build" } }
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/index.html" }
