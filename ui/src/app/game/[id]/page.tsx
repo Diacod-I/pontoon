@@ -306,44 +306,26 @@ export default function GamePage() {
   if (matchData.status === "FINISHED") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#baeb34]/50 to-[#baeb34] p-6">
-        <Card className="p-8 text-center max-w-2xl">
-          <h1 className="text-3xl font-bold mb-6">Game Over</h1>
-          <div className="space-y-4">
-            <p>
-              <strong>Match ID:</strong> {matchId}
-            </p>
-            <p>
-              <strong>Bet Amount:</strong> {matchData.betAmount} FLOW
-            </p>
-            <p>
-              <strong>Rounds Completed:</strong> {matchData.currentRound - 1}
-            </p>
-            {matchData.finalReward && (
-              <p>
-                <strong>Final Reward:</strong> {matchData.finalReward} FLOW
-              </p>
-            )}
-          </div>
-
-          {matchData.rounds && matchData.rounds.length > 0 && (
-            <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-4">Round History</h2>
-              <div className="space-y-2">
-                {matchData.rounds.map((round) => (
-                  <div
-                    key={round.roundNumber}
-                    className={`p-3 rounded border ${round.won ? "bg-green-100" : "bg-red-100"}`}
-                  >
-                    <p>
-                      Round {round.roundNumber}: Chose {round.playerChoice},
-                      Bomb was {round.winningNumber} -{" "}
-                      {round.won ? "Survived!" : "Hit Bomb!"}
-                    </p>
-                  </div>
-                ))}
-              </div>
+        <Card
+          className="p-4 mb-6 w-full max-w-4xl border-2 border-black 
+    shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] 
+    transition-shadow duration-300 ease-in-out
+    bg-white"
+        >
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="font-semibold">Match ID</p>
+              <p>{matchId}</p>
             </div>
-          )}
+            <div>
+              <p className="font-semibold">Bet Amount</p>
+              <p>{matchData.betAmount} FLOW</p>
+            </div>
+            <div>
+              <p className="font-semibold">Current Round</p>
+              <p>{matchData.currentRound} / 7</p>
+            </div>
+          </div>
         </Card>
       </main>
     );
@@ -454,13 +436,19 @@ export default function GamePage() {
 
       {/* Round History */}
       {matchData.rounds && matchData.rounds.length > 0 && (
-        <Card className="mt-6 p-4 w-full max-w-2xl">
+        <Card
+          className="mt-6 p-4 w-full max-w-2xl border-2 border-black 
+      shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] 
+      transition-shadow duration-300 ease-in-out
+      bg-white"
+        >
           <h3 className="font-semibold mb-2">Previous Rounds</h3>
           <div className="space-y-1 max-h-32 overflow-y-auto">
             {matchData.rounds.map((round) => (
               <div
                 key={round.roundNumber}
-                className={`text-sm p-2 rounded ${round.won ? "bg-green-100" : "bg-red-100"}`}
+                className={`text-sm p-2 rounded border border-black 
+            ${round.won ? "bg-green-200" : "bg-red-200"}`}
               >
                 Round {round.roundNumber}: Choice {round.playerChoice} | Bomb{" "}
                 {round.winningNumber} | {round.won ? "✅" : "💥"}

@@ -35,7 +35,6 @@ export const getMatchById = query({
 
     if (!match) return null;
 
-    // Also get rounds for this match
     const rounds = await ctx.db
       .query("rounds")
       .withIndex("by_matchId", (q) => q.eq("matchId", args.matchId))
@@ -91,5 +90,29 @@ export const getMatchesByTxHash = query({
       .query("matches")
       .withIndex("by_txHash", (q) => q.eq("txHash", args.txHash))
       .collect();
+  },
+});
+
+export const getUserActiveMatches = query({
+  args: { userAddress: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("matches")
+      .withIndex("by_userAddress", (q) => q.eq("userAddress", args.userAddress))
+      .filter((q) => q.eq(q.field("status"), "ACTIVE"))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const getUserFinishedMatches = query({
+  args: { userAddress: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("matches")
+      .withIndex("by_userAddress", (q) => q.eq("userAddress", args.userAddress))
+      .filter((q) => q.eq(q.field("status"), "FINISHED"))
+      .order("desc")
+      .take(10);
   },
 });
