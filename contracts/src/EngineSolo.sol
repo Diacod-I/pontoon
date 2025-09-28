@@ -52,8 +52,6 @@ contract EngineSolo is Owned, ReentrancyGuard {
 
     function createMatch(uint256 betAmount) public payable returns (uint256) {
         require(msg.value == betAmount, "Wrong bet amount");
-        (bool success,) = address(this).call{value: betAmount}("");
-        require(success, "Failed to send tokens");
 
         uint256 matchId = totalMatches;
         Match storage newMatch = matches[matchId];

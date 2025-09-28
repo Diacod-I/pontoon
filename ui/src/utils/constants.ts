@@ -1,4 +1,4 @@
 import { type Address } from "viem";
 
 export const CONTRACT_ADDRESS: Address =
-  "0x3a766F22491722b0c679a85Ba74640Bc1BCD905D";
+  "0xe990c5C9760829A6f44c5F5c6539212DFfACEDe5";

@@ -1,9 +1,6 @@
 export const engineAbi = [
-  {
-    type: "constructor",
-    inputs: [{ name: "_relayer", type: "address", internalType: "address" }],
-    stateMutability: "nonpayable",
-  },
+  { type: "constructor", inputs: [], stateMutability: "nonpayable" },
+  { type: "receive", stateMutability: "payable" },
   {
     type: "function",
     name: "CADENCE_ARCH",
@@ -13,35 +10,7 @@ export const engineAbi = [
   },
   {
     type: "function",
-    name: "DOMAIN_SEPARATOR",
-    inputs: [],
-    outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     name: "MAX_ROUNDS",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "MOVE_TYPEHASH",
-    inputs: [],
-    outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "READY_TIMEOUT",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "ROUND_TIMEOUT",
     inputs: [],
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
@@ -55,10 +24,10 @@ export const engineAbi = [
   },
   {
     type: "function",
-    name: "joinMatch",
+    name: "leaveMatch",
     inputs: [{ name: "matchId", type: "uint256", internalType: "uint256" }],
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
   },
   {
     type: "function",
@@ -66,17 +35,14 @@ export const engineAbi = [
     inputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     outputs: [
       { name: "player1", type: "address", internalType: "address" },
-      { name: "player2", type: "address", internalType: "address" },
-      { name: "challenger", type: "address", internalType: "address" },
-      { name: "conman", type: "address", internalType: "address" },
-      { name: "winner", type: "address", internalType: "address" },
       { name: "betAmount", type: "uint256", internalType: "uint256" },
       { name: "createdAt", type: "uint256", internalType: "uint256" },
-      { name: "readyDeadline", type: "uint256", internalType: "uint256" },
       { name: "currentRound", type: "uint256", internalType: "uint256" },
-      { name: "player1Ready", type: "bool", internalType: "bool" },
-      { name: "player2Ready", type: "bool", internalType: "bool" },
-      { name: "status", type: "uint8", internalType: "enum Engine.Status" },
+      {
+        name: "status",
+        type: "uint8",
+        internalType: "enum EngineSolo.Status",
+      },
     ],
     stateMutability: "view",
   },
@@ -89,22 +55,23 @@ export const engineAbi = [
   },
   {
     type: "function",
-    name: "ready",
-    inputs: [{ name: "matchId", type: "uint256", internalType: "uint256" }],
+    name: "playRound",
+    inputs: [
+      { name: "matchId", type: "uint256", internalType: "uint256" },
+      { name: "playerChoice", type: "uint256", internalType: "uint256" },
+    ],
     outputs: [],
     stateMutability: "nonpayable",
   },
   {
     type: "function",
-    name: "revealMove",
+    name: "randomnessInRange",
     inputs: [
-      { name: "matchId", type: "uint256", internalType: "uint256" },
-      { name: "roundNumber", type: "uint256", internalType: "uint256" },
-      { name: "move", type: "uint256", internalType: "uint256" },
-      { name: "salt", type: "bytes32", internalType: "bytes32" },
+      { name: "min", type: "uint64", internalType: "uint64" },
+      { name: "max", type: "uint64", internalType: "uint64" },
     ],
-    outputs: [],
-    stateMutability: "nonpayable",
+    outputs: [{ name: "", type: "uint64", internalType: "uint64" }],
+    stateMutability: "view",
   },
   {
     type: "function",
@@ -115,13 +82,10 @@ export const engineAbi = [
     ],
     outputs: [
       { name: "startTime", type: "uint256", internalType: "uint256" },
-      { name: "conmanCommit", type: "bytes32", internalType: "bytes32" },
-      { name: "challengerCommit", type: "bytes32", internalType: "bytes32" },
-      { name: "conmanChoice", type: "uint256", internalType: "uint256" },
-      { name: "challengerChoice", type: "uint256", internalType: "uint256" },
-      { name: "conmanRevealed", type: "bool", internalType: "bool" },
-      { name: "challengerRevealed", type: "bool", internalType: "bool" },
+      { name: "playerChoice", type: "uint256", internalType: "uint256" },
+      { name: "bombNumber", type: "uint256", internalType: "uint256" },
       { name: "resolved", type: "bool", internalType: "bool" },
+      { name: "survived", type: "bool", internalType: "bool" },
     ],
     stateMutability: "view",
   },
@@ -129,13 +93,6 @@ export const engineAbi = [
     type: "function",
     name: "transferOwnership",
     inputs: [{ name: "newOwner", type: "address", internalType: "address" }],
-    outputs: [],
-    stateMutability: "nonpayable",
-  },
-  {
-    type: "function",
-    name: "updateRelayer",
-    inputs: [{ name: "_relayer", type: "address", internalType: "address" }],
     outputs: [],
     stateMutability: "nonpayable",
   },
@@ -166,47 +123,14 @@ export const engineAbi = [
   },
   {
     type: "event",
-    name: "MatchJoined",
+    name: "OwnershipTransferred",
     inputs: [
       {
-        name: "matchId",
-        type: "uint256",
-        indexed: false,
-        internalType: "uint256",
-      },
-      {
-        name: "joiner",
+        name: "user",
         type: "address",
         indexed: true,
         internalType: "address",
       },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
-    name: "MatchReady",
-    inputs: [
-      {
-        name: "matchId",
-        type: "uint256",
-        indexed: true,
-        internalType: "uint256",
-      },
-      {
-        name: "timestamp",
-        type: "uint256",
-        indexed: true,
-        internalType: "uint256",
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
-    name: "OwnershipTransferred",
-    inputs: [
-      { name: "user", type: "address", indexed: true, internalType: "address" },
       {
         name: "newOwner",
         type: "address",
@@ -218,7 +142,7 @@ export const engineAbi = [
   },
   {
     type: "event",
-    name: "PlayersReady",
+    name: "PlayerLeft",
     inputs: [
       {
         name: "matchId",
@@ -227,23 +151,17 @@ export const engineAbi = [
         internalType: "uint256",
       },
       {
-        name: "challenger",
-        type: "address",
+        name: "reward",
+        type: "uint256",
         indexed: false,
-        internalType: "address",
-      },
-      {
-        name: "conman",
-        type: "address",
-        indexed: false,
-        internalType: "address",
+        internalType: "uint256",
       },
     ],
     anonymous: false,
   },
   {
     type: "event",
-    name: "RoundStarted",
+    name: "RoundPlayed",
     inputs: [
       {
         name: "matchId",
@@ -258,11 +176,18 @@ export const engineAbi = [
         internalType: "uint256",
       },
       {
-        name: "tilesCount",
+        name: "playerChoice",
         type: "uint256",
         indexed: false,
         internalType: "uint256",
       },
+      {
+        name: "winningNumber",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      { name: "won", type: "bool", indexed: false, internalType: "bool" },
     ],
     anonymous: false,
   },

@@ -6,21 +6,25 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useAccount } from "wagmi";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, usePublicClient } from "wagmi";
 import { CONTRACT_ADDRESS } from "../../utils/constants";
-import { parseEther } from "viem";
+import { parseEther, decodeEventLog, type Address } from "viem";
 import { engineAbi } from "@/utils/abi/engineAbi";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export default function HomePage() {
   const router = useRouter();
   const [stakeAmount, setStakeAmount] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { writeContractAsync } = useWriteContract({});
+  const publicClient = usePublicClient();
+  const createMatch = useMutation(api.matches.createMatch);
 
   const handleCreateGame = async () => {
-    if (!isConnected) {
+    if (!isConnected || !address) {
       const card = document.querySelector(".stake-card");
       card?.classList.add("shake-animation");
       setTimeout(() => card?.classList.remove("shake-animation"), 800);
@@ -37,8 +41,10 @@ export default function HomePage() {
     try {
       setIsLoading(true);
 
+      let matchId: number | null = null;
       const betValue = parseEther(stakeAmount);
 
+      // Execute the transaction
       const txHash = await writeContractAsync({
         address: CONTRACT_ADDRESS,
         abi: engineAbi,
@@ -49,9 +55,56 @@ export default function HomePage() {
 
       console.log("Tx sent:", txHash);
 
-      router.push(`/game?stake=${stakeAmount}`);
+      if (!publicClient) {
+        throw new Error("Public client not available");
+      }
+
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
+
+      for (const log of receipt.logs) {
+        if (log.address.toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()) {
+          continue;
+        }
+
+        try {
+          const decoded = decodeEventLog({
+            abi: engineAbi,
+            data: log.data,
+            topics: log.topics,
+          });
+
+          if (decoded.eventName === "MatchCreated") {
+            matchId = Number(decoded.args.matchId);
+            console.log("Match created with ID:", matchId);
+            break;
+          }
+        } catch (decodeError) {
+          console.error("Failed to decode log:", decodeError);
+        }
+      }
+
+      if (matchId === null) {
+        throw new Error("Could not extract match ID from transaction");
+      }
+
+      // Store match data in Convex
+      await createMatch({
+        matchId,
+        userAddress: address,
+        betAmount: stakeAmount,
+        timestamp: Date.now(),
+        txHash,
+      });
+
+      console.log("Match stored in database");
+
+      // Redirect to game page with matchId
+      router.push(`/game/${matchId}`);
     } catch (err) {
-      console.error("Tx failed:", err);
+      console.error("Transaction failed:", err);
+      // You might want to show an error message to the user here
     } finally {
       setIsLoading(false);
     }
@@ -109,8 +162,8 @@ export default function HomePage() {
             >
               {isConnected
                 ? isLoading
-                  ? "Please wait..."
-                  : "Deposit"
+                  ? "Creating Game..."
+                  : "Deposit & Start Game"
                 : "Wallet not connected"}
             </Button>
           </div>
