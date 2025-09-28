@@ -20,42 +20,42 @@ export default function HomePage() {
   const { writeContractAsync } = useWriteContract({});
 
   const handleCreateGame = async () => {
-  if (!isConnected) {
-    const card = document.querySelector(".stake-card");
-    card?.classList.add("shake-animation");
-    setTimeout(() => card?.classList.remove("shake-animation"), 800);
-    return;
-  }
+    if (!isConnected) {
+      const card = document.querySelector(".stake-card");
+      card?.classList.add("shake-animation");
+      setTimeout(() => card?.classList.remove("shake-animation"), 800);
+      return;
+    }
 
-  if (!stakeAmount || Number(stakeAmount) <= 0) {
-    const card = document.querySelector(".stake-card");
-    card?.classList.add("shake-animation");
-    setTimeout(() => card?.classList.remove("shake-animation"), 800);
-    return;
-  }
+    if (!stakeAmount || Number(stakeAmount) <= 0) {
+      const card = document.querySelector(".stake-card");
+      card?.classList.add("shake-animation");
+      setTimeout(() => card?.classList.remove("shake-animation"), 800);
+      return;
+    }
 
-  try {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const betValue = parseEther(stakeAmount);
+      const betValue = parseEther(stakeAmount);
 
-    const txHash = await writeContractAsync({
-      address: CONTRACT_ADDRESS,
-      abi: engineAbi,
-      functionName: "createMatch",
-      args: [betValue],
-      value: betValue,
-    });
+      const txHash = await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: engineAbi,
+        functionName: "createMatch",
+        args: [betValue],
+        value: betValue,
+      });
 
-    console.log("Tx sent:", txHash);
+      console.log("Tx sent:", txHash);
 
-    router.push(`/game?stake=${stakeAmount}`);
-  } catch (err) {
-    console.error("Tx failed:", err);
-  } finally {
-    setIsLoading(false);
-  }
-};
+      router.push(`/game?stake=${stakeAmount}`);
+    } catch (err) {
+      console.error("Tx failed:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#baeb34]/50 to-[#baeb34]">

@@ -15,14 +15,14 @@ export const metadata: Metadata = {
 
 const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  display: "swap",
 });
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en" className={geist.className}>
       <body>
         <Providers>
           <nav className="fixed start-0 top-0 z-20 w-full border-b-3 border-black bg-black/10 dark:border-gray-600 dark:bg-gray-900">
