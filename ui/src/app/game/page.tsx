@@ -116,7 +116,7 @@ export default function CreateGamePage() {
     setCountdown("🎲");
 
     // play audio (safely)
-    drumRollRef.current?.play().catch(() => {});
+    drumRollRef.current?.play().catch(() => void 0);
 
     // wait for dramatic pause
     await sleep(4000);
@@ -189,7 +189,7 @@ export default function CreateGamePage() {
               key={index}
               onClick={() => handleButtonClick(index)}
               className={getButtonStyle(index)}
-              disabled={result !== null || !availableCards.includes(index)}
+              disabled={result !== null ?? !availableCards.includes(index)}
               aria-pressed={selectedButton === index}
               aria-label={`card-${index}`}
               type="button"

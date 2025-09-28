@@ -97,7 +97,7 @@ export default function YourGamesPage() {
               <div className="text-6xl mb-4">🎯</div>
               <h3 className="text-xl font-semibold mb-2">No Active Games</h3>
               <p className="text-gray-600 mb-4">
-                You don't have any active games right now.
+                {"You don't have any active games right now."}
               </p>
               <Link href="/">
                 <Button variant="brutal">Start Your First Game</Button>

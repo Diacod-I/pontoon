@@ -4,6 +4,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import Providers from "../components/provider/rainbow-provider";
+import Image from "next/image"
 
 import Connect from "@/components/connect";
 
@@ -28,7 +29,7 @@ export default function RootLayout({
           <nav className="fixed start-0 top-0 z-20 w-full border-b-1 border-black bg-black/10 dark:border-gray-600 dark:bg-gray-900">
             <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
               <div className="flexcol mx-2 flex items-center justify-center">
-                <img
+                <Image
                   src="./logo.png"
                   className="mx-3 h-16 rounded-full border-2 border-black"
                   alt="Pontoon Logo"

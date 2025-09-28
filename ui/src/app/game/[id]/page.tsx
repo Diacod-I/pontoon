@@ -11,6 +11,39 @@ import { CONTRACT_ADDRESS } from "../../../utils/constants";
 import { engineAbi } from "@/utils/abi/engineAbi";
 import { decodeEventLog } from "viem";
 
+interface RoundInfo {
+  roundNumber: number;
+  playerChoice?: number;
+  winningNumber?: number;
+  won?: boolean;
+}
+
+function isRoundInfo(v: unknown): v is RoundInfo {
+  return (
+    !!v &&
+    typeof v === "object" &&
+    "roundNumber" in v &&
+    typeof (v as any).roundNumber === "number"
+  );
+}
+
+/** Narrow decoded event shape */
+interface DecodedEvent {
+  eventName: string;
+  args: Record<string, unknown>;
+}
+
+function isDecodedEvent(v: unknown): v is DecodedEvent {
+  return (
+    !!v &&
+    typeof v === "object" &&
+    "eventName" in v &&
+    typeof (v as any).eventName === "string" &&
+    "args" in v &&
+    typeof (v as any).args === "object"
+  );
+}
+
 export default function GamePage() {
   const params = useParams();
   const matchId = parseInt(params.id as string);
@@ -135,7 +168,7 @@ export default function GamePage() {
     await sleep(500);
     setCountdown("🎲");
 
-    drumRollRef.current?.play().catch(() => {});
+    drumRollRef.current?.play().catch(() => void 0);
     await sleep(3000);
     setCountdown(null);
 
@@ -159,26 +192,76 @@ export default function GamePage() {
       });
 
       // Parse RoundPlayed event
-      let roundResult: any = null;
-      for (const log of receipt.logs) {
-        if (log.address.toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()) {
+      let roundResult: RoundInfo | null = null;
+      for (const log of receipt.logs as Array<unknown>) {
+        // `log` is unknown — narrow safely
+        if (!log || typeof log !== "object") continue;
+
+        // log might not have address/data/topics — narrow those
+        const logObj = log as {
+          address?: string;
+          data?: string;
+          topics?: string[];
+        };
+
+        if (
+          !logObj.address ||
+          typeof logObj.address !== "string" ||
+          logObj.address.toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()
+        ) {
           continue;
         }
 
         try {
-          const decoded = decodeEventLog({
+          const decodedUnknown = decodeEventLog({
             abi: engineAbi,
-            data: log.data,
-            topics: log.topics,
-          });
+            data: logObj.data ?? "",
+            topics: (logObj.topics as any) ?? [],
+          }) as unknown;
+
+          if (!isDecodedEvent(decodedUnknown)) {
+            continue;
+          }
+
+          const decoded = decodedUnknown;
 
           if (decoded.eventName === "RoundPlayed") {
+            const args = decoded.args;
+
+            // Safely extract numeric fields from args (handle string|number)
+            const safeNumber = (v: unknown): number | undefined => {
+              if (typeof v === "number") return v;
+              if (typeof v === "string" && v !== "") {
+                const n = Number(v);
+                return Number.isFinite(n) ? n : undefined;
+              }
+              return undefined;
+            };
+
+            const matchIdParsed = safeNumber(args.matchId);
+            const roundNumberParsed = safeNumber(args.roundNumber);
+            const playerChoiceParsed = safeNumber(args.playerChoice);
+            const winningNumberParsed = safeNumber(args.winningNumber);
+            const wonParsed =
+              typeof args.won === "boolean" ? args.won : undefined;
+
+            if (
+              matchIdParsed === undefined ||
+              roundNumberParsed === undefined ||
+              playerChoiceParsed === undefined ||
+              winningNumberParsed === undefined ||
+              wonParsed === undefined
+            ) {
+              // Unexpected shape — skip
+              console.warn("Decoded RoundPlayed has unexpected arg shapes", args);
+              continue;
+            }
+
             roundResult = {
-              matchId: Number(decoded.args.matchId),
-              roundNumber: Number(decoded.args.roundNumber),
-              playerChoice: Number(decoded.args.playerChoice),
-              winningNumber: Number(decoded.args.winningNumber),
-              won: decoded.args.won,
+              roundNumber: Number(roundNumberParsed),
+              playerChoice: Number(playerChoiceParsed),
+              winningNumber: Number(winningNumberParsed),
+              won: Boolean(wonParsed),
             };
             break;
           }
@@ -203,7 +286,7 @@ export default function GamePage() {
       });
 
       // Update UI based on result
-      const bombPosition = roundResult.winningNumber - 1; // Convert back to 0-indexed
+      const bombPosition = (roundResult.winningNumber ?? 1) - 1; // Convert back to 0-indexed
       setTrapCard(bombPosition);
       setResult(roundResult.won ? 0 : 1);
 
