@@ -25,12 +25,12 @@ export default function RootLayout({
     <html lang="en" className={geist.className}>
       <body>
         <Providers>
-          <nav className="fixed start-0 top-0 z-20 w-full border-b-3 border-black bg-black/10 dark:border-gray-600 dark:bg-gray-900">
+          <nav className="fixed start-0 top-0 z-20 w-full border-b-1 border-black bg-black/10 dark:border-gray-600 dark:bg-gray-900">
             <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
               <div className="flexcol mx-2 flex items-center justify-center">
                 <img
                   src="./logo.png"
-                  className="mx-3 h-16 rounded-full border-3 border-black"
+                  className="mx-3 h-16 rounded-full border-2 border-black"
                   alt="Pontoon Logo"
                 />
                 <span className="mx-auto text-2xl font-semibold dark:text-white">

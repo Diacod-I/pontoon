@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as matches from "../matches.js";
 import type * as relayer from "../relayer.js";
 
 /**
@@ -24,6 +25,7 @@ import type * as relayer from "../relayer.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  matches: typeof matches;
   relayer: typeof relayer;
 }>;
 export declare const api: FilterApi<

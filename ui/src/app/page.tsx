@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   const router = useRouter();
@@ -8,30 +9,26 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#baeb34]/50 to-[#baeb34]">
       {/* <div className="bg-[url('/monkey_background.png')] bg-cover bg-center z-0 h-screen"/> */}
       <div className="container flex flex-col items-center justify-center gap-6 py-8 mb-20 mt-20">
-        <div className="bg-white border-black border-3 px-6 rounded-md mb-2 gradient-animation">
-          <span className="text-5xlfont-extrabold tracking-tight text-white sm:text-[5rem] mb-10">
+        <div className="px-6 py-4 rounded-md ">
+          <h1
+            className="text-4xl sm:text-9xl lg:text-[12rem] font-extrabold tracking-tight 
+    text-pink-500 [text-shadow:4px_4px_0_#000,8px_8px_0_#222]"
+          >
             Pontoon
-          </span>
+          </h1>
         </div>
-        <h3 className="text-2xl text-center text-black mt-8">
-          A PvP betting game where players stake{" "}
-          <span className="bg-[#75d864] px-2 py-1 text-white border-black border-3 rounded-md">
-            FLOW
-          </span>{" "}
-          coins, and guess safe tiles while evading trap tiles!
-        </h3>
-        <h3 className="text-5xl text-center text-black" />
-        <h3 className="text-center text-4xl font-thin text-black">
+        <h3 className="text-center text-xl text-black">
           Longer you survive, more you earn 🤑!
         </h3>
         <div className="flex flex-wrap gap-8 mt-4">
-          <button
+          <Button
             onClick={() => router.push("/create")}
             type="button"
-            className="text-white bg-blue-500 border-black border-3 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xl px-6 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            variant={"brutal"}
+            size={"xl"}
           >
             Play Now
-          </button>
+          </Button>
           {/* <button 
             onClick={() => router.push('/join')}
             type="button" 
