@@ -1,6 +1,7 @@
 # Contract build and cache
 contracts/cache/
 contracts/out/
+contracts/broadcast/
 
 # Ignore all node_modules folders recursively
 **/node_modules/

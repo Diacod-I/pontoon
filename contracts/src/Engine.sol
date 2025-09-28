@@ -1,8 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
+// Archived
+
 import {Owned} from "solmate/auth/Owned.sol";
 import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
+// import {ECDSA} from "openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
+// import {EIP712} from "openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol";
 
 contract Engine is Owned, ReentrancyGuard {
     // Events
@@ -58,7 +62,10 @@ contract Engine is Owned, ReentrancyGuard {
     bytes32 public constant DOMAIN_SEPARATOR = keccak256("TrapGame");
     address public constant CADENCE_ARCH = 0x0000000000000000000000010000000000000001;
 
+    bytes32 public constant MOVE_TYPEHASH = keccak256("Move(bytes32 commit,uint256 matchId,uint256 roundNumber)");
+
     // State Variables
+    address relayer;
     uint256 totalMatches;
     mapping(uint256 => Match) public matches;
     mapping(uint256 => mapping(uint256 => Round)) public rounds;
@@ -69,8 +76,15 @@ contract Engine is Owned, ReentrancyGuard {
         _;
     }
 
+    modifier onlyRelayer() {
+        require(msg.sender == relayer, "Not a trusted relayer");
+        _;
+    }
+
     // Functions
-    constructor(address owner) Owned(owner) {}
+    constructor(address _relayer) Owned(msg.sender) {
+        relayer = _relayer;
+    }
 
     // Creates a new match with a specific 'betAmount'
     function createMatch(uint256 betAmount) public payable returns (uint256) {
@@ -127,7 +141,82 @@ contract Engine is Owned, ReentrancyGuard {
         }
     }
 
+    // function submitMoves(
+    //     uint256 matchId,
+    //     bytes32 conmanCommit,
+    //     bytes32 challengerCommit,
+    //     bytes calldata conmanSig,
+    //     bytes calldata challengerSig
+    // ) external onlyRelayer matchExists(matchId) {
+    //     Match storage m = matches[matchId];
+    //     require(m.status == Status.ACTIVE, "Match not active");
+
+    //     uint256 rnm = m.currentRound;
+    //     Round storage r = rounds[matchId][rnm];
+
+    //     require(!r.resolved, "Round already resolved");
+    //     require(block.timestamp >= r.startTime, "Round not started");
+
+    //     if (conmanCommit != bytes32(0)) {
+    //         _verifyMoveSignature(challengerCommit, matchId, rnm, challengerSig, m.challenger);
+    //         r.challengerCommit = challengerCommit;
+    //     }
+
+    //     r.revealDeadline = block.timestamp + ROUND_TIMEOUT;
+    // }
+
+    function updateRelayer(address _relayer) public onlyOwner {
+        relayer = _relayer;
+    }
+
     // Internal Functions
+    function revealMove(uint256 matchId, uint256 roundNumber, uint256 move, bytes32 salt)
+        external
+        matchExists(matchId)
+    {
+        Match storage m = matches[matchId];
+        Round storage r = rounds[matchId][roundNumber];
+
+        require(!r.resolved, "Round already resolved");
+        require(r.startTime != 0, "Round not started");
+
+        bytes32 computed = keccak256(abi.encodePacked(move, salt));
+
+        if (msg.sender == m.conman) {
+            require(r.conmanCommit != bytes32(0), "No conman commit on record");
+            require(!r.conmanRevealed, "Conman already revealed");
+            require(computed == r.conmanCommit, "Conman commit mismatch");
+            r.conmanChoice = move;
+            r.conmanRevealed = true;
+        } else if (msg.sender == m.challenger) {
+            require(r.challengerCommit != bytes32(0), "No challenger commit on record");
+            require(!r.challengerRevealed, "Challenger already revealed");
+            require(computed == r.challengerCommit, "Challenger commit mismatch");
+            r.challengerChoice = move;
+            r.challengerRevealed = true;
+        } else {
+            revert("Not a player");
+        }
+
+        // if (r.conmanRevealed && r.challengerRevealed) {
+        //     _resolveRound(matchId, roundNumber);
+        // }
+    }
+
+    // function _verifySignature(
+    //     bytes32 commit,
+    //     bytes calldata signature,
+    //     address expectedSigner,
+    //     uint256 matchId,
+    //     uint256 roundNumber
+    // ) private pure {
+    //     bytes32 messageHash = keccak256(abi.encodePacked(DOMAIN_SEPARATOR, commit, matchId, roundNumber));
+    //     bytes32 ethSigned = ECDSA.toEthSignedMessageHash(messageHash);
+    //     address signer = ECDSA.recover(ethSigned, signature);
+    //     require(signer != address(0), "Invalid signature");
+    //     require(signer == expectedSigner, "Signature from wrong player");
+    // }
+
     function _assignRolesAndStart(uint256 matchId) private {
         Match storage m = matches[matchId];
 
