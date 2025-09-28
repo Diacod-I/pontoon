@@ -32,15 +32,15 @@ export default function CreateGamePage() {
           <Card className={`stake-card w-[450px] p-8 border-black border-4 bg-white/90 backdrop-blur ${!isConnected ? 'border-red-500' : ''}`}>
             <div className="space-y-6">
               <div className="space-y-4">
-                <Label htmlFor="stake" className="text-2xl font-semibold">
-                  Stake Amount & No. of Rounds
+                <Label htmlFor="stake" className="text-2xl font-semibold text-center">
+                  How much are you willing to stake?
                 </Label>
                 <Input
                   id="match_id"
                   type="number"
                   value={stakeAmount}
                   onChange={(e) => setStakeAmount(e.target.value)}
-                  placeholder="Enter FLOW amount"
+                  placeholder="Enter FLOW coin amount"
                   className="border-3 border-black h-14 text-xl mt-4"
                   min="0"
                   step="0.1"
@@ -67,7 +67,7 @@ export default function CreateGamePage() {
                 onClick={handleSubmit}
                 type="button" 
                 className={`w-full text-white border-black border-3 font-medium rounded-lg text-xl px-8 py-4 text-center ${
-                  isConnected ? 'bg-blue-500 hover:bg-blue-700' : 'bg-red-500 hover:bg-red-700'
+                  isConnected ? 'bg-blue-500 hover:bg-blue-700' : 'bg-red-800'
                 }`}
               >
                 {isConnected ? 'Start Game' : 'Wallet not connected'}

@@ -1,62 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
-
-@keyframes gradient-x {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.animate-gradient-x {
-  animation: gradient-x 5s linear infinite;
-  background-size: 200% auto;
-}
-
-@keyframes rainbow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.text-animation {
-  background: linear-gradient(
-    to right,
-    #777778,
-    #41579c,
-    #43863b,
-    #777778
-  );
-  animation: rainbow 5s ease infinite;
-  background-size: 300% auto;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-.shake-animation {
-  animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both;
-  border: 2px solid #ef4444;
-}
-
-.warning-text {
-  color: #ef4444;
-  font-weight: 600;
-  text-align: center;
-  margin-top: 1rem;
-}
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-sans:
-    'Mulish', var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
@@ -165,4 +114,28 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+.transition-colors {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+@keyframes gradient-bg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-animation {
+  background: linear-gradient(
+    -45deg,
+    #ee7752,
+    #e73c7e,
+    #23a6d5,
+    #23d5ab
+  );
+  background-size: 400% 400%;
+  animation: gradient-bg 5s ease infinite;
 }
